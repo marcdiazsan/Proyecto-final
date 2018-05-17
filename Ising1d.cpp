@@ -9,19 +9,20 @@ const int N=500;
 void fill(std::vector<double> &s);
 void change(std::vector<double> &s);
 double initial_energy(std::vector<double>s);
-double change_energy(std::vector<double>s, int i);
+double change_energy(std::vector<double>s, int i, double energy);
 /*double total_energy();
 double magnetization();
 double fluctuation();
 double specific_heat();*/
 int main(int argc, char **argv)
 {
-  double T=10000, energy;
+  double T=10000, energy, energy_tmp;
   std::vector<double> s(N);
   int index=0;
   fill(s);
-  energia=initial_energy(s)
+  energy=initial_energy(s)
   change(s,index);
+  energy_tmp=change_energy(s,index,energy);
   
 
 }
@@ -68,8 +69,10 @@ double initial_energy(std::vector<double>s )
   return sum*J;
 }
 
-double change_energy(std::vector<double>s, int i)
+double change_energy(std::vector<double> s, int i,double energy)
 {
-
+  energy-=J*(-s[i]*s[i-1]-s[i]*s[i+1]);//se restan las 2 de la energía previa
+  energy+=J*(s[i]*s[i+1]+s[i]*s[i+1]);// se suman las 2 de la energía al cambiar un unico estado
+  return energy;
 
 }
