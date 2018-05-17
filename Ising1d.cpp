@@ -6,19 +6,22 @@
 const double J=1;
 const double k=1;
 const int N=500;
-void fill( std::vector<double> &s);
-void change();
+void fill(std::vector<double> &s);
+/*void change();
 double energy();
 double total_energy();
 double magnetization();
 double fluctuation();
-double specific_heat();
+double specific_heat();*/
 int main(int argc, char *argv)
 {
   double T=10000;
   std::vector<double> s(N);
-  void fill(std::vector<double> &s);
-  
+  fill(s);
+  for(int i=0; i<N; i++)
+    {
+      std::cout<<s[i]<<std::endl;
+    }
   
 
 }
