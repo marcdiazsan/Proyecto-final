@@ -6,25 +6,27 @@
 const double J=1;
 const double k=1;
 const int N=500;
+const double T=10000;
 void fill(std::vector<double> &s);
-void change(std::vector<double> &s);
+void change(std::vector<double> &s,int &i);
 double initial_energy(std::vector<double>s);
 double change_energy(std::vector<double>s, int i, double energy);
-/*double total_energy();
-double magnetization();
-double fluctuation();
+void energy_comparision(double &energy, double &tmp_energy,int &k);
+double magnetization(std::vector<double>s);
+/*double fluctuation();
 double specific_heat();*/
 int main(int argc, char **argv)
 {
-  double T=10000, energy, energy_tmp;
+  double  energy, energy_tmp, magnetization;
   std::vector<double> s(N);
-  int index=0;
+  int index=0, k;//k, contador de pasos
   fill(s);
-  energy=initial_energy(s)
+  energy=initial_energy(s);
   change(s,index);
   energy_tmp=change_energy(s,index,energy);
-  
-
+  energy_comparision(energy,energy_tmp,k);
+  //al llegar al equilibrio, la energia total es la energy que quede al final
+  magnetization=magnetization(s);
 }
 void fill(std::vector<double> &s)
 {
@@ -76,3 +78,39 @@ double change_energy(std::vector<double> s, int i,double energy)
   return energy;
 
 }
+void energy_comparision(double &energy, double &tmp_energy, int &k)
+{ int seed=4;
+  std::mt19937 gen(seed);
+  std::uniform_real_distribution<double> dis(0,1);
+  if(tmp_energy<=energy)
+    {
+      energy=tmp_energy;
+    }
+  else
+    {
+      double deltaE=tmp_energy-energy;
+      double P=std::exp((-deltaE)/(k*T));
+      double rj=dis(gen);
+      if(P>=rj)
+	{
+	  energy=tmp_energy;
+	}
+      else
+	{
+	  energy=energy;
+	}
+      
+    }
+  k+=1;
+  
+}
+double magnetization(std::vector<double>s)
+{
+  double m;
+  for(int k=0; k<N;k++)
+    {
+      m+=s[k];
+    }
+  return m;
+}
+  
