@@ -39,8 +39,6 @@ int main(int argc, char **argv)
   energy=initial_energy(s);
   std::cout<<energy<<std::endl;
 
-  
-  do{
     /*for(int i=0; i<N; i++)
     {
       std::cout<<s[i];
@@ -50,14 +48,14 @@ int main(int argc, char **argv)
     std::cout<<energy; 
     change(s,index);
     energy_tmp=change_energy(s,index,energy);
+    std::cout<<energy_tmp;
     energy_comparision(energy,energy_tmp,n);  //al llegar al equilibrio, la energia total es la energy que quede al final(no se necesita una función mas)
     e+=energy;
     u=e/n; // Se calcula el promedio de la energia
     e2+=(energy*energy);
     u2=e2/n; // Se calcula el promedio de la energia al cuadrado
     std::cout<<" "<<u2<<std::endl;
-    }
-  while(u2>epsilon);
+  
   
   mgt=magnetization(s);
   c=(u2-u*u)/(n*k*T*T);
@@ -107,12 +105,12 @@ double initial_energy(std::vector<double>s )
 
 double change_energy(std::vector<double> s, int i,double energy)
 {
-  energy-=J*(-s[i]*s[i-1]-s[i]*s[i+1]);//se restan las 2 de la energía previa
-  energy+=J*(s[i]*s[i+1]+s[i]*s[i+1]);// se suman las 2 de la energía al cambiar un unico estado
+  energy-=-J*(-s[i]*s[i-1]-s[i]*s[i+1]);//se restan las 2 de la energía previa
+  energy+=-J*(s[i]*s[i-1]+s[i]*s[i+1]);// se suman las 2 de la energía al cambiar un unico estado
   return energy;
 
 }
-void energy_comparision(double &energy, double &tmp_energy, int &k)
+void energy_comparision(double &energy, double &tmp_energy, int &n)
 { std::random_device rd;
   std::mt19937 gen(rd());
   std::uniform_real_distribution<double> dis(0,1);
@@ -135,7 +133,7 @@ void energy_comparision(double &energy, double &tmp_energy, int &k)
 	}
       
     }
-  k+=1;
+  n+=1;
   
 }
 double magnetization(std::vector<double>s)
