@@ -3,11 +3,15 @@
 #include<omp.h>
 #include<cmath>
 #include<vector>
+
+
 const double J=1;
 const double k=1;
-const int N=10;
+const int N=10000;
 const double T=10000;
 const double epsilon=0.1;
+
+
 void fill(std::vector<double> &s);
 void change(std::vector<double> &s,int &i);
 double initial_energy(std::vector<double>s);
@@ -16,35 +20,52 @@ void energy_comparision(double &energy, double &tmp_energy,int &k);
 double magnetization(std::vector<double>s);
 /*double fluctuation();
 double specific_heat();*/
+
+
 int main(int argc, char **argv)
 {
-  double  energy, energy_tmp, mgt,e2=0,u2;
+  double  energy, energy_tmp, mgt,e2=0,u2,e=0,u,c;
   std::vector<double> s(N);
-  int index=0, k=0;//k, contador de pasos
+  int index=0, n=0;//n, contador de pasos
   fill(s);
-  for(int i=0; i<N; i++)
+  
+  /* for(int i=0; i<N; i++)
     {
-      std::cout<<s[i]<<std::endl;
+      std::cout<<s[i];
     }
+  
+    std::cout<<endl;*/
+
   energy=initial_energy(s);
   std::cout<<energy<<std::endl;
+
+  
   do{
-  change(s,index);
-  energy_tmp=change_energy(s,index,energy);
-  energy_comparision(energy,energy_tmp,k);
-  //al llegar al equilibrio, la energia total es la energy que quede al final(no se necesita una funciÃ³n mas)
-  e2+=(energy*energy);
-  u2=e2/k;
-  //std::cout<<u2<<std::endl;
-  }
+    /*for(int i=0; i<N; i++)
+    {
+      std::cout<<s[i];
+    }
+    std::cout<<std::endl;*/
+    energy=initial_energy(s);
+    std::cout<<energy; 
+    change(s,index);
+    energy_tmp=change_energy(s,index,energy);
+    energy_comparision(energy,energy_tmp,n);  //al llegar al equilibrio, la energia total es la energy que quede al final(no se necesita una función mas)
+    e+=energy;
+    u=e/n; // Se calcula el promedio de la energia
+    e2+=(energy*energy);
+    u2=e2/n; // Se calcula el promedio de la energia al cuadrado
+    std::cout<<" "<<u2<<std::endl;
+    }
   while(u2>epsilon);
   
   mgt=magnetization(s);
+  c=(u2-u*u)/(n*k*T*T);
 }
 void fill(std::vector<double> &s)
 {
-  int seed=4;
-  std::mt19937 gen(seed);
+  std::random_device rd;
+  std::mt19937 gen(rd());
   std::uniform_real_distribution<double> dis(0,1);
   
   for (int i=0; i<N; i++)
@@ -59,8 +80,8 @@ void fill(std::vector<double> &s)
 
 void change(std::vector<double> &s, int &i)
 {
- int seed=2;
-  std::mt19937 gen(seed);
+  std::random_device rd;
+  std::mt19937 gen(rd());
   std::uniform_int_distribution<int> dis(0,N-1);
   i=dis(gen);
   s[i]*=-1;
@@ -86,18 +107,18 @@ double initial_energy(std::vector<double>s )
 
 double change_energy(std::vector<double> s, int i,double energy)
 {
-  energy-=J*(-s[i]*s[i-1]-s[i]*s[i+1]);//se restan las 2 de la energÃ­a previa
-  energy+=J*(s[i]*s[i+1]+s[i]*s[i+1]);// se suman las 2 de la energÃ­a al cambiar un unico estado
+  energy-=J*(-s[i]*s[i-1]-s[i]*s[i+1]);//se restan las 2 de la energía previa
+  energy+=J*(s[i]*s[i+1]+s[i]*s[i+1]);// se suman las 2 de la energía al cambiar un unico estado
   return energy;
 
 }
 void energy_comparision(double &energy, double &tmp_energy, int &k)
-{ int seed=4;
-  std::mt19937 gen(seed);
+{ std::random_device rd;
+  std::mt19937 gen(rd());
   std::uniform_real_distribution<double> dis(0,1);
   if(tmp_energy<=energy)
     {
-      energy=tmp_energy;
+      energy=tmp_energy;  //accept the new configuration
     }
   else
     {
@@ -110,7 +131,7 @@ void energy_comparision(double &energy, double &tmp_energy, int &k)
 	}
       else
 	{
-	  energy=energy;
+	  energy=energy; //energy keeps the same
 	}
       
     }
@@ -126,4 +147,4 @@ double magnetization(std::vector<double>s)
     }
   return m;
 }
-  
+
